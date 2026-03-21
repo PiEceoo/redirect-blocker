@@ -1,0 +1,404 @@
+/* ── Reset & Base ─────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --bg:           #0d1117;
+    --surface:      rgba(255,255,255,0.05);
+    --surface-hover:rgba(255,255,255,0.08);
+    --border:       rgba(255,255,255,0.08);
+    --border-focus: rgba(99,210,255,0.5);
+    --cyan:         #3dd6f5;
+    --cyan-dim:     rgba(61,214,245,0.15);
+    --violet:       #a78bfa;
+    --violet-dim:   rgba(167,139,250,0.15);
+    --red:          #f87171;
+    --red-dim:      rgba(248,113,113,0.15);
+    --green:        #4ade80;
+    --green-dim:    rgba(74,222,128,0.15);
+    --text:         #e2e8f0;
+    --text-muted:   #64748b;
+    --text-dim:     #94a3b8;
+    --radius:       12px;
+    --radius-sm:    8px;
+}
+
+body {
+    width: 320px;
+    min-height: 100px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* ── Ambient Orbs ─────────────────────────────────────────────────────── */
+.orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(60px);
+    pointer-events: none;
+    z-index: 0;
+    animation: drift 8s ease-in-out infinite alternate;
+}
+.orb-1 { width: 180px; height: 180px; background: rgba(61,214,245,0.12); top: -60px; right: -40px; animation-delay: 0s; }
+.orb-2 { width: 140px; height: 140px; background: rgba(167,139,250,0.10); bottom: 40px; left: -50px; animation-delay: -3s; }
+.orb-3 { width: 100px; height: 100px; background: rgba(74,222,128,0.07); top: 50%; right: 10px; animation-delay: -5s; }
+
+@keyframes drift {
+    from { transform: translate(0, 0) scale(1); }
+    to   { transform: translate(10px, 15px) scale(1.08); }
+}
+
+/* ── Container ────────────────────────────────────────────────────────── */
+.container {
+    position: relative;
+    z-index: 1;
+    padding: 16px 14px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* ── Header ───────────────────────────────────────────────────────────── */
+.header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    animation: fadeDown 0.3s ease both;
+}
+
+.app-icon {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 8px rgba(61,214,245,0.25));
+    animation: icon-breathe 4s ease-in-out infinite;
+}
+
+@keyframes icon-breathe {
+    0%, 100% { filter: drop-shadow(0 0 7px rgba(61,214,245,0.22)); }
+    50%       { filter: drop-shadow(0 0 14px rgba(61,214,245,0.42)); }
+}
+
+.title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+}
+
+.subtitle {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 1px;
+}
+
+/* ── Cards ────────────────────────────────────────────────────────────── */
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 13px;
+    backdrop-filter: blur(12px);
+    animation: fadeUp 0.35s ease both;
+    animation-delay: var(--delay, 0s);
+}
+
+.card-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+}
+
+@keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Input Row ────────────────────────────────────────────────────────── */
+.input-row {
+    display: flex;
+    gap: 8px;
+}
+
+input[type="text"] {
+    flex: 1;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px 11px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12.5px;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+input[type="text"]::placeholder { color: var(--text-muted); }
+
+input[type="text"]:focus {
+    border-color: var(--border-focus);
+    background: rgba(61,214,245,0.04);
+}
+
+.btn-add {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--cyan), #60a5fa);
+    border: none;
+    color: #0d1117;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.15s, transform 0.15s;
+}
+.btn-add:hover { opacity: 0.85; transform: scale(1.05); }
+.btn-add:active { transform: scale(0.96); }
+
+/* ── Count Badge ──────────────────────────────────────────────────────── */
+.count-badge {
+    background: var(--cyan-dim);
+    color: var(--cyan);
+    border-radius: 20px;
+    padding: 1px 7px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    font-family: 'DM Sans', sans-serif;
+}
+
+/* ── Blocked List ─────────────────────────────────────────────────────── */
+#blocked-list {
+    list-style: none;
+    max-height: 140px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+#blocked-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 9px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    font-size: 12px;
+    animation: fadeUp 0.2s ease both;
+}
+
+#blocked-list li span {
+    flex: 1;
+    margin-right: 8px;
+    word-break: break-all;
+    color: var(--text-dim);
+    font-family: 'DM Mono', 'Courier New', monospace;
+    font-size: 11.5px;
+}
+
+.empty-state {
+    color: var(--text-muted) !important;
+    font-style: italic;
+    font-size: 12px !important;
+    justify-content: center !important;
+    background: transparent !important;
+    border-color: transparent !important;
+    padding: 4px 0 !important;
+}
+
+.remove-button {
+    background: var(--red-dim);
+    color: var(--red);
+    border: 1px solid rgba(248,113,113,0.2);
+    border-radius: 5px;
+    padding: 3px 8px;
+    cursor: pointer;
+    font-size: 10.5px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 500;
+    transition: background 0.15s, transform 0.1s;
+    white-space: nowrap;
+}
+.remove-button:hover { background: rgba(248,113,113,0.25); transform: scale(1.04); }
+
+/* ── Toggle Row ───────────────────────────────────────────────────────── */
+.toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.toggle-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toggle-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.yt-icon {
+    background: rgba(255,0,0,0.12);
+    color: #ff4444;
+    border: 1px solid rgba(255,68,68,0.2);
+}
+
+.toggle-label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.3;
+}
+
+.toggle-sub {
+    display: block;
+    font-size: 10.5px;
+    color: var(--text-muted);
+    margin-top: 1px;
+}
+
+/* Toggle switch */
+.switch { position: relative; display: inline-block; width: 40px; height: 22px; flex-shrink: 0; }
+.switch input { opacity: 0; width: 0; height: 0; }
+
+.slider {
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    cursor: pointer;
+    transition: background 0.25s, border-color 0.25s;
+}
+.slider::before {
+    content: '';
+    position: absolute;
+    width: 16px; height: 16px;
+    left: 2px; top: 50%;
+    transform: translateY(-50%);
+    background: var(--text-muted);
+    border-radius: 50%;
+    transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), background 0.25s;
+}
+.switch input:checked + .slider {
+    background: linear-gradient(135deg, rgba(61,214,245,0.3), rgba(74,222,128,0.2));
+    border-color: var(--cyan);
+}
+.switch input:checked + .slider::before {
+    transform: translateY(-50%) translateX(18px);
+    background: var(--cyan);
+}
+
+/* ── Backup ───────────────────────────────────────────────────────────── */
+.backup-row {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-backup {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+.btn-backup:active { transform: scale(0.97); }
+
+.btn-backup.export {
+    background: var(--cyan-dim);
+    color: var(--cyan);
+    border-color: rgba(61,214,245,0.25);
+}
+.btn-backup.export:hover { background: rgba(61,214,245,0.22); border-color: var(--cyan); }
+
+/* Drop zone acts as second button + drag target */
+.drop-zone {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    border: 1px dashed rgba(167,139,250,0.35);
+    background: var(--violet-dim);
+    color: var(--violet);
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.2s, color 0.15s;
+    overflow: hidden;
+    text-align: center;
+}
+.drop-zone:hover { background: rgba(167,139,250,0.22); border-color: var(--violet); }
+.drop-zone.drag-over {
+    background: var(--green-dim);
+    border-color: var(--green);
+    color: var(--green);
+    border-style: solid;
+}
+
+.drop-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+}
+
+/* ── Status ───────────────────────────────────────────────────────────── */
+.import-status {
+    font-size: 11px;
+    text-align: center;
+    min-height: 16px;
+    margin-top: 7px;
+    color: var(--green);
+    font-weight: 500;
+    transition: opacity 0.3s;
+}
+.import-status.error { color: var(--red); }

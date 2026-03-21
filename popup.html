@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirect Blocker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+
+    <!-- Ambient background orbs -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="container">
+
+        <!-- Header -->
+        <header class="header">
+            <!-- App icon — pure SVG, no PNG needed -->
+            <svg class="app-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <!-- Background gradient: dark navy to slightly lighter -->
+                    <linearGradient id="bg-grad" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#1c2233"/>
+                        <stop offset="100%" stop-color="#141926"/>
+                    </linearGradient>
+                    <!-- Radial glow behind the shield -->
+                    <radialGradient id="icon-glow" cx="50%" cy="48%" r="52%">
+                        <stop offset="0%" stop-color="#3dd6f5" stop-opacity="0.22"/>
+                        <stop offset="100%" stop-color="#3dd6f5" stop-opacity="0"/>
+                    </radialGradient>
+                    <!-- Shield gradient: cyan top → violet bottom -->
+                    <linearGradient id="shield-grad" x1="0.5" y1="0" x2="0.5" y2="1">
+                        <stop offset="0%" stop-color="#3dd6f5"/>
+                        <stop offset="100%" stop-color="#818cf8"/>
+                    </linearGradient>
+                    <!-- Inner shield highlight -->
+                    <linearGradient id="shield-fill" x1="0.3" y1="0" x2="0.7" y2="1">
+                        <stop offset="0%" stop-color="#3dd6f5" stop-opacity="0.13"/>
+                        <stop offset="100%" stop-color="#818cf8" stop-opacity="0.06"/>
+                    </linearGradient>
+                    <filter id="glow-blur" x="-40%" y="-40%" width="180%" height="180%">
+                        <feGaussianBlur stdDeviation="2.5" result="blur"/>
+                        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                    </filter>
+                </defs>
+
+                <!-- Rounded square background -->
+                <rect width="64" height="64" rx="15" fill="url(#bg-grad)"/>
+                <!-- Ambient glow overlay -->
+                <rect width="64" height="64" rx="15" fill="url(#icon-glow)"/>
+
+                <!-- Subtle top-edge highlight (glass rim) -->
+                <rect x="10" y="0" width="44" height="1.2" rx="0.6"
+                      fill="white" opacity="0.07"/>
+
+                <!-- Shield fill (semi-transparent inner surface) -->
+                <path d="M32 11 L47 17.5 L47 33 C47 41.5 40.5 48.5 32 52 C23.5 48.5 17 41.5 17 33 L17 17.5 Z"
+                      fill="url(#shield-fill)"/>
+
+                <!-- Shield outline with glow filter -->
+                <path d="M32 11 L47 17.5 L47 33 C47 41.5 40.5 48.5 32 52 C23.5 48.5 17 41.5 17 33 L17 17.5 Z"
+                      fill="none"
+                      stroke="url(#shield-grad)"
+                      stroke-width="2.2"
+                      stroke-linejoin="round"
+                      filter="url(#glow-blur)"/>
+
+                <!-- Notch at shield top — matches the reference icon detail -->
+                <path d="M28 11.8 L32 10 L36 11.8"
+                      fill="none"
+                      stroke="url(#shield-grad)"
+                      stroke-width="2.2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"/>
+            </svg>
+
+            <div>
+                <h1 class="title">Redirect Blocker</h1>
+                <p class="subtitle">Your web, your rules</p>
+            </div>
+        </header>
+
+        <!-- Add site -->
+        <section class="card" style="--delay:0.05s">
+            <label class="card-label">Block a Site</label>
+            <div class="input-row">
+                <input type="text" id="site-input" placeholder="example.com" autocomplete="off" spellcheck="false">
+                <button id="add-button" class="btn-add" aria-label="Add site">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- Blocked list -->
+        <section class="card" style="--delay:0.1s">
+            <label class="card-label">Blocked Sites <span id="site-count" class="count-badge">0</span></label>
+            <ul id="blocked-list"><li class="empty-state">No sites blocked yet</li></ul>
+        </section>
+
+        <!-- Auto-skip -->
+        <section class="card" style="--delay:0.15s">
+            <label class="card-label">Auto-Skip</label>
+            <div class="toggle-row">
+                <div class="toggle-left">
+                    <div class="toggle-icon yt-icon">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.8 15.5V8.5l6.2 3.5-6.2 3.5z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="toggle-label">YouTube Ad Skipper</span>
+                        <span class="toggle-sub">Skips ads &amp; jumps unskippable to end</span>
+                    </div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="yt-ad-toggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </section>
+
+        <!-- Backup -->
+        <section class="card" style="--delay:0.2s">
+            <label class="card-label">Settings Backup</label>
+            <div class="backup-row">
+                <button id="export-button" class="btn-backup export">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Export
+                </button>
+                <div id="drop-zone" class="drop-zone">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    <span>Import / Drop JSON</span>
+                    <input type="file" id="import-file" accept=".json">
+                </div>
+            </div>
+            <div id="import-status" class="import-status"></div>
+        </section>
+
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
