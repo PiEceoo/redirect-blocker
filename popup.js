@@ -1,3 +1,19 @@
+// Wake the service worker before doing anything else.
+// If it's gone idle, the first sendMessage may fail — we retry once.
+function wakeServiceWorker(callback) {
+  chrome.runtime.sendMessage({ type: 'PING' }, (response) => {
+    if (chrome.runtime.lastError || !response) {
+      // Worker was asleep — give it 150ms to spin back up then continue
+      setTimeout(callback, 150);
+    } else {
+      callback();
+    }
+  });
+}
+
+// Wrap everything in the wake check so the popup never opens to a dead worker
+wakeServiceWorker(() => {
+
 // popup.js
 
 const siteInput   = document.getElementById('site-input');
@@ -167,3 +183,5 @@ dropZone.addEventListener('drop', (e) => {
     if (file && file.name.endsWith('.json')) processImportFile(file);
     else showStatus('✗ Please drop a .json file.', true);
 });
+
+}); // end wakeServiceWorker

@@ -126,6 +126,22 @@ chrome.runtime.onInstalled.addListener(setIcon);
 chrome.runtime.onStartup.addListener(setIcon);
 setIcon();
 
+// ─── Service Worker Keepalive ─────────────────────────────────────────────
+// Chrome MV3 service workers shut down after ~30s of inactivity which causes
+// the popup to silently fail to open. We use two mechanisms to prevent this:
+//
+// 1. A chrome.alarms ping every 25 seconds that wakes the worker back up
+//    before Chrome can kill it (alarms are the only MV3-approved keepalive).
+// 2. A message listener so the popup can ping us on open and confirm we're alive.
+
+chrome.alarms.create('keepalive', { periodInMinutes: 0.4 }); // every ~25s
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name === 'keepalive') {
+    // Just waking up is enough — redraw icon in case it was reset
+    setIcon();
+  }
+});
+
 // ─── Redirect Blocker ─────────────────────────────────────────────────────
 
 function getHostname(url) {
@@ -160,9 +176,13 @@ chrome.tabs.onCreated.addListener(async (newTab) => {
   }
 });
 
-// ─── Relay toggle messages to content scripts ─────────────────────────────
+// ─── Single message listener (PING + toggle relay) ───────────────────────
 
-chrome.runtime.onMessage.addListener((message) => {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'PING') {
+    sendResponse({ alive: true });
+    return true;
+  }
   if (message.type === 'SET_YT_AD_SKIP') {
     chrome.tabs.query({}, (tabs) => {
       for (const tab of tabs) {
