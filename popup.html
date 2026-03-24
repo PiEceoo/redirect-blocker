@@ -11,34 +11,40 @@
 </head>
 <body>
 
-    <!-- Ambient background orbs -->
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
 
     <div class="container">
 
+        <!-- Update banner (hidden until an update is found) -->
+        <div id="update-banner" class="update-banner hidden">
+            <div class="update-left">
+                <span class="update-dot"></span>
+                <div>
+                    <span class="update-title">Update available</span>
+                    <span id="update-version" class="update-version"></span>
+                </div>
+            </div>
+            <a id="update-link" class="update-btn" href="#" target="_blank">Download</a>
+        </div>
+
         <!-- Header -->
         <header class="header">
-            <!-- App icon — pure SVG, no PNG needed -->
             <svg class="app-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                 <defs>
-                    <!-- Background gradient: dark navy to slightly lighter -->
                     <linearGradient id="bg-grad" x1="0" y1="0" x2="1" y2="1">
                         <stop offset="0%" stop-color="#1c2233"/>
                         <stop offset="100%" stop-color="#141926"/>
                     </linearGradient>
-                    <!-- Radial glow behind the shield -->
                     <radialGradient id="icon-glow" cx="50%" cy="48%" r="52%">
                         <stop offset="0%" stop-color="#3dd6f5" stop-opacity="0.22"/>
                         <stop offset="100%" stop-color="#3dd6f5" stop-opacity="0"/>
                     </radialGradient>
-                    <!-- Shield gradient: cyan top → violet bottom -->
                     <linearGradient id="shield-grad" x1="0.5" y1="0" x2="0.5" y2="1">
                         <stop offset="0%" stop-color="#3dd6f5"/>
                         <stop offset="100%" stop-color="#818cf8"/>
                     </linearGradient>
-                    <!-- Inner shield highlight -->
                     <linearGradient id="shield-fill" x1="0.3" y1="0" x2="0.7" y2="1">
                         <stop offset="0%" stop-color="#3dd6f5" stop-opacity="0.13"/>
                         <stop offset="100%" stop-color="#818cf8" stop-opacity="0.06"/>
@@ -48,45 +54,42 @@
                         <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
                     </filter>
                 </defs>
-
-                <!-- Rounded square background -->
                 <rect width="64" height="64" rx="15" fill="url(#bg-grad)"/>
-                <!-- Ambient glow overlay -->
                 <rect width="64" height="64" rx="15" fill="url(#icon-glow)"/>
-
-                <!-- Subtle top-edge highlight (glass rim) -->
-                <rect x="10" y="0" width="44" height="1.2" rx="0.6"
-                      fill="white" opacity="0.07"/>
-
-                <!-- Shield fill (semi-transparent inner surface) -->
-                <path d="M32 11 L47 17.5 L47 33 C47 41.5 40.5 48.5 32 52 C23.5 48.5 17 41.5 17 33 L17 17.5 Z"
-                      fill="url(#shield-fill)"/>
-
-                <!-- Shield outline with glow filter -->
-                <path d="M32 11 L47 17.5 L47 33 C47 41.5 40.5 48.5 32 52 C23.5 48.5 17 41.5 17 33 L17 17.5 Z"
-                      fill="none"
-                      stroke="url(#shield-grad)"
-                      stroke-width="2.2"
-                      stroke-linejoin="round"
-                      filter="url(#glow-blur)"/>
-
-                <!-- Notch at shield top — matches the reference icon detail -->
-                <path d="M28 11.8 L32 10 L36 11.8"
-                      fill="none"
-                      stroke="url(#shield-grad)"
-                      stroke-width="2.2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"/>
+                <rect x="10" y="0" width="44" height="1.2" rx="0.6" fill="white" opacity="0.07"/>
+                <path d="M32 11 L47 17.5 L47 33 C47 41.5 40.5 48.5 32 52 C23.5 48.5 17 41.5 17 33 L17 17.5 Z" fill="url(#shield-fill)"/>
+                <path d="M32 11 L47 17.5 L47 33 C47 41.5 40.5 48.5 32 52 C23.5 48.5 17 41.5 17 33 L17 17.5 Z" fill="none" stroke="url(#shield-grad)" stroke-width="2.2" stroke-linejoin="round" filter="url(#glow-blur)"/>
+                <path d="M28 11.8 L32 10 L36 11.8" fill="none" stroke="url(#shield-grad)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-
             <div>
                 <h1 class="title">Redirect Blocker</h1>
                 <p class="subtitle">Your web, your rules</p>
             </div>
         </header>
 
+        <!-- Stats -->
+        <section class="card stats-card" style="--delay:0.03s">
+            <label class="card-label">Redirects Blocked</label>
+            <div id="stats-content">
+                <div class="stats-global">
+                    <div class="stat-box">
+                        <span class="stat-num" id="stat-session">0</span>
+                        <span class="stat-lbl">This session</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-box">
+                        <span class="stat-num" id="stat-total">0</span>
+                        <span class="stat-lbl">All time</span>
+                    </div>
+                </div>
+                <!-- Per-site breakdown, shown when there's data -->
+                <div id="stats-sites" class="stats-sites hidden"></div>
+                <button id="stats-reset" class="stats-reset hidden">Reset all-time stats</button>
+            </div>
+        </section>
+
         <!-- Add site -->
-        <section class="card" style="--delay:0.05s">
+        <section class="card" style="--delay:0.07s">
             <label class="card-label">Block a Site</label>
             <div class="input-row">
                 <input type="text" id="site-input" placeholder="example.com" autocomplete="off" spellcheck="false">
@@ -99,7 +102,7 @@
         </section>
 
         <!-- Blocked list -->
-        <section class="card" style="--delay:0.1s">
+        <section class="card" style="--delay:0.11s">
             <label class="card-label">Blocked Sites <span id="site-count" class="count-badge">0</span></label>
             <ul id="blocked-list"><li class="empty-state">No sites blocked yet</li></ul>
         </section>
@@ -127,7 +130,7 @@
         </section>
 
         <!-- Backup -->
-        <section class="card" style="--delay:0.2s">
+        <section class="card" style="--delay:0.19s">
             <label class="card-label">Settings Backup</label>
             <div class="backup-row">
                 <button id="export-button" class="btn-backup export">
