@@ -1,5 +1,5 @@
 {
-  "version": "1.4",
-  "changelog": "Added redirect counter and update checker",
+  "version": "1.5",
+  "changelog": "Added redirect counter and update checker(1.4), banner functionality check (1.5)",
   "download": "https://github.com/PiEceoo/redirect-blocker/releases/latest"
 }
